@@ -21,9 +21,10 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-import registerUser from "./routes/user.route.js";
+import userRoutes from "./routes/user.route.js";
 
-app.use("/api/user", registerUser);
+app.use("/api/user", userRoutes);
+app.use("/api/user", userRoutes);
 //console.log("ka hal ba bhai log");
 
 connectDB()
