@@ -21,8 +21,10 @@ const generateAccessAndRefereshTokens = async (userId) => {
   }
 };
 
+// Controller for register new user
+
 const userRegister = asyncHandler(async (req, res) => {
-  console.log(req.body);
+  //console.log(req.body);
   const { fullName, email, password, role } = req.body;
 
   if ([fullName, email, password, role].some((field) => field?.trim() === "")) {

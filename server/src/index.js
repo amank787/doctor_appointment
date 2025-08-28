@@ -22,9 +22,11 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 import userRoutes from "./routes/user.route.js";
+import doctorRoutes from "./routes/doctor.route.js";
 
 app.use("/api/user", userRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/doctor", doctorRoutes);
 //console.log("ka hal ba bhai log");
 
 connectDB()
