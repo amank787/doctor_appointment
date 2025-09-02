@@ -23,11 +23,12 @@ app.use(cookieParser());
 
 import userRoutes from "./routes/user.route.js";
 import doctorRoutes from "./routes/doctor.route.js";
+import appointmenRoutes from "./routes/appointment.route.js";
 
 app.use("/api/user", userRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/doctor", doctorRoutes);
-//console.log("ka hal ba bhai log");
+app.use("/api/appointment", appointmenRoutes);
 
 connectDB()
   .then(() => {
