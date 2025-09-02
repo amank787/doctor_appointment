@@ -42,4 +42,17 @@ const updatedDoctorProfile = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, {}, "Doctor saved"));
 });
 
-export { updatedDoctorProfile };
+// Get all appointments
+
+const getAllDoctor = asyncHandler(async (req, res) => {
+  try {
+    const doctors = await Doctor.find();
+    return res
+      .status(200)
+      .json(new ApiResponse(200, doctors, "doctors fetched successfully"));
+  } catch (error) {
+    throw new ApiError(500, error?.message || "Error fetching doctors");
+  }
+});
+
+export { updatedDoctorProfile, getAllDoctor };
