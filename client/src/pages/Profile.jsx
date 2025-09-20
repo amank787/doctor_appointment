@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Header from "../components/header";
 
 const Profile = () => {
   const [user, setUser] = useState(
@@ -20,6 +21,7 @@ const Profile = () => {
   };
 
   return (
+    <><Header/>
     <div className="max-w-4xl mx-auto py-10 px-6">
       {/* Header */}
       <div className="flex items-center gap-6 mb-8">
@@ -60,6 +62,7 @@ const Profile = () => {
         </button>
       </div>
     </div>
+    </>
   );
 };
 

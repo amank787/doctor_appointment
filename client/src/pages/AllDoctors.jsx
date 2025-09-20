@@ -81,10 +81,11 @@ const AllDoctors = () => {
             </div>
           ))}
         </div>
-         <Footer/>
+        
       </main>
      
     </div>
+     <Footer/>
     </>
 
   );

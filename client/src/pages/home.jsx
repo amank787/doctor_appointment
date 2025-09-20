@@ -1,6 +1,6 @@
 // src/App.jsx
 import React from "react";
-import Header from "../components/Header";
+import Header from "../components/header";
 import Footer from "../components/Footer";
 import { doctors } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
@@ -9,8 +9,9 @@ import { useNavigate } from "react-router-dom";
 const App = () => {
   const navigate = useNavigate();
   return (
-    <div className="font-sans">
-      <Header />
+    <> <Header />
+    <div className="font-sans px-36 py-1">
+     
 
       {/* Hero Section */}
       <section className="bg-blue-600 text-white py-20 mt-6">
@@ -25,10 +26,10 @@ const App = () => {
               appointment hassle-free.
             </p>
             <button
-              onClick={() => navigate("/doctors")}
-              className="px-6 py-3 bg-slate-600 text-white font-semibold rounded-xl hover:bg-indigo-300"
+              onClick={() => navigate("/appointments")}
+              className="px-6 py-3 bg-white text-blue-600  font-semibold rounded-3xl hover:bg-indigo-300"
             >
-              Go to Doctors
+              Book Appointment
             </button>
           </div>
 
@@ -105,15 +106,18 @@ const App = () => {
       <section className="bg-blue-600 text-white py-20">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-10">
           <div className="text-center md:text-left">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 leading-snug">
-              Book Appointment With 100+ Trusted Doctors
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 ml-20 leading-snug">
+              Book Appointment  
+              <br />
+              <br />
+              With 100+ Trusted Doctors
             </h2>
-            <a
-              href="#"
-              className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-xl hover:bg-gray-100"
+            <button
+              onClick={() => navigate("/signup")}
+              className="px-6 py-3 ml-20 mt-5 bg-white text-blue-600 font-semibold rounded-3xl hover:bg-indigo-300 "
             >
               Create Account
-            </a>
+            </button>
           </div>
 
           {/* ✅ use another doctor image */}
@@ -124,9 +128,9 @@ const App = () => {
           />
         </div>
       </section>
-
-      <Footer />
     </div>
+    <Footer />
+    </>
   );
 };
 
