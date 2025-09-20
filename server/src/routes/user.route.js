@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  allPatients,
   loginUser,
   logoutUser,
   userRegister,
@@ -10,6 +11,8 @@ const router = Router();
 
 router.route("/registerUser").post(userRegister);
 router.route("/login").post(loginUser);
+
+router.route("/patient").get(verifyJWT, allPatients);
 
 router.route("/logout").post(verifyJWT, logoutUser);
 

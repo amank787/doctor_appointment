@@ -137,4 +137,20 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged Out"));
 });
 
-export { userRegister, loginUser, logoutUser };
+//get all user which are patient
+
+const allPatients = asyncHandler(async (req, res) => {
+  try {
+    const patients = await User.find({ role: "patient" }).select(
+      "-password -refreshToken"
+    );
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, patients, "Patients fetched successfully"));
+  } catch (error) {
+    throw new ApiError(500, error?.message || "Error fetching patients");
+  }
+});
+
+export { userRegister, loginUser, logoutUser, allPatients };
