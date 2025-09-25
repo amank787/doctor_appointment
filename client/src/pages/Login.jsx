@@ -1,28 +1,61 @@
 // src/pages/Login.jsx
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import Headers from "../components/Header";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
   const [form, setForm] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login Data:", form);
-    // here you can call your backend login API
-    // if success:
-    navigate("/"); // redirect to homepage
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:3000/api/user/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(result.message || "Login failed");
+        setLoading(false);
+        return;
+      }
+
+      // Store user in context
+      login(result.data.user, {
+        accessToken: result.data.accessToken,
+        refreshToken: result.data.refreshToken,
+      });
+
+      // ✅ Role-based redirect
+      const role = result.data.user.role;
+      if (role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (role === "doctor") {
+        navigate("/doctor/dashboard"); // make sure you create this route
+      } else {
+        navigate("/"); // patient default
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      
       <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8">
         <h2 className="text-2xl font-bold text-center mb-2">Login</h2>
         <p className="text-center text-gray-600 mb-6">
@@ -30,7 +63,6 @@ const Login = () => {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email */}
           <div>
             <label
               htmlFor="email"
@@ -49,7 +81,6 @@ const Login = () => {
             />
           </div>
 
-          {/* Password */}
           <div>
             <label
               htmlFor="password"
@@ -68,25 +99,18 @@ const Login = () => {
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+            disabled={loading}
+            className={`w-full py-2 rounded-lg ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-
-        {/* Sign Up Redirect */}
-        <p className="text-center text-sm text-gray-600 mt-4">
-          New user?{" "}
-          <button
-            onClick={() => navigate("/signup")}
-            className="text-blue-600 font-medium hover:underline"
-          >
-            Signup
-          </button>
-        </p>
       </div>
     </div>
   );

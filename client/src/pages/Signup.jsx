@@ -1,25 +1,56 @@
-// src/pages/Signup.jsx
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext); // ✅ use context login
   const [form, setForm] = useState({
-    name: "",
+    fullName: "",
     email: "",
     password: "",
+    role: "patient", // default role
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Signup Data:", form);
-    // Call your backend signup API here
-    // if success:
-    navigate("/login"); // redirect to login page after signup
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:3000/api/user/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        alert(result.message || "Signup failed");
+        setLoading(false);
+        return;
+      }
+
+      console.log("✅ Signup success:", result);
+
+      // ✅ Automatically log in the user after signup
+      login(result.data.user, {
+        accessToken: result.data.accessToken,
+        refreshToken: result.data.refreshToken,
+      });
+
+      navigate("/"); // redirect to home page
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -34,16 +65,16 @@ const Signup = () => {
           {/* Full Name */}
           <div>
             <label
-              htmlFor="name"
+              htmlFor="fullName"
               className="block text-sm font-medium text-gray-700"
             >
               Full Name
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={form.name}
+              id="fullName"
+              name="fullName"
+              value={form.fullName}
               onChange={handleChange}
               required
               className="w-full px-3 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -88,25 +119,39 @@ const Signup = () => {
             />
           </div>
 
+          {/* Role */}
+          <div>
+            <label
+              htmlFor="role"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Role
+            </label>
+            <select
+              id="role"
+              name="role"
+              value={form.role}
+              onChange={handleChange}
+              className="w-full px-3 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            >
+              <option value="patient">Patient</option>
+              <option value="doctor">Doctor</option>
+            </select>
+          </div>
+
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+            disabled={loading}
+            className={`w-full py-2 rounded-lg ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
           >
-            Create account
+            {loading ? "Creating account..." : "Create Account"}
           </button>
         </form>
-
-        {/* Login Redirect */}
-        <p className="text-center text-sm text-gray-600 mt-4">
-          Already have an account?{" "}
-          <button
-            onClick={() => navigate("/login")}
-            className="text-blue-600 font-medium hover:underline"
-          >
-            Login here
-          </button>
-        </p>
       </div>
     </div>
   );

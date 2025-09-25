@@ -1,12 +1,11 @@
 import React from "react";
-import Header from "../components/header";
+
 import Footer from "../components/Footer";
 import contact_image from "../assets/contact_image.png"; // <-- replace with your actual image name
 
 const Contact = () => {
   return (
     <>
-      <Header />
       <div className="max-w-6xl mx-auto px-4 py-12">
         {/* Title */}
         <h2 className="text-2xl font-semibold text-center mb-12">CONTACT US</h2>
@@ -37,7 +36,9 @@ const Contact = () => {
 
             {/* Careers */}
             <div>
-              <h3 className="text-xl font-semibold mb-4">CAREERS AT PRESCRIPTO</h3>
+              <h3 className="text-xl font-semibold mb-4">
+                CAREERS AT PRESCRIPTO
+              </h3>
               <p className="text-gray-600 mb-4">
                 Learn more about our teams and job openings.
               </p>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { doctors } from "../assets/assets"; // ✅ all doctor images are here
+import { doctors } from "../../assets/assets.js"; // ✅ all doctor images are here
 
 const Appointments = () => {
   const [appointments, setAppointments] = useState([

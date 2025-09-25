@@ -31,47 +31,15 @@ const AdminAppointments = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md p-6">
-        <h1 className="text-2xl font-bold text-blue-600 mb-10">
-          Prescripto <span className="text-sm text-gray-500">Admin</span>
-        </h1>
-        <nav className="space-y-4">
-          <button
-            onClick={() => navigate("/admin/dashboard")}
-            className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100"
-          >
-            Dashboard
-          </button>
-          <button
-            onClick={() => navigate("/admin/appointments")}
-            className="w-full text-left px-4 py-2 rounded-lg bg-blue-50 text-blue-600"
-          >
-            Appointments
-          </button>
-          <button
-            onClick={() => navigate("/admin/add-doctor")}
-            className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100"
-          >
-            Add Doctor
-          </button>
-          <button
-            onClick={() => navigate("/admin/doctors-list")}
-            className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100"
-          >
-            Doctors List
-          </button>
-        </nav>
-      </aside>
-
       {/* Main Content */}
       <main className="flex-1 p-6">
         {/* Top Bar */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold">All Appointments</h2>
-          <button 
-          onClick={() => navigate("/login")}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg">
+          <button
+            onClick={() => navigate("/login")}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+          >
             Logout
           </button>
         </div>
