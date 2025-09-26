@@ -1,91 +1,129 @@
-import React, { useState } from "react";
-import { doctors } from "../../assets/assets.js"; // ✅ all doctor images are here
+import React, { useEffect, useState } from "react";
 
 const Appointments = () => {
-  const [appointments, setAppointments] = useState([
-    {
-      id: 1,
-      doctor: "Dr. Richard James",
-      specialty: "General Physician",
-      address: "57th Cross, Richmond Circle, Church Road, London",
-      date: "25th July, 2024",
-      time: "8:30 PM",
-      status: "unpaid",
-      image: doctors[0].image, // ✅ first doctor image
-    },
-    {
-      id: 2,
-      doctor: "Dr. Emily Larson",
-      specialty: "Gynecologist",
-      address: "27th Cross, Richmond Circle, Church Road, London",
-      date: "26th July, 2024",
-      time: "10:00 AM",
-      status: "pending",
-      image: doctors[1].image, // ✅ second doctor image
-    },
-    {
-      id: 3,
-      doctor: "Dr. Sarah Patel",
-      specialty: "Dermatologist",
-      address: "37th Cross, Richmond Circle, Church Road, London",
-      date: "27th July, 2024",
-      time: "11:30 AM",
-      status: "paid",
-      image: doctors[2].image, // ✅ third doctor image
-    },
-  ]);
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // ✅ Get logged-in user and token
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = localStorage.getItem("accessToken");
+
+  const formatDate = (dateStr) => {
+    const options = { day: "numeric", month: "short", year: "numeric" };
+    return new Date(dateStr).toLocaleDateString("en-US", options);
+  };
+
+  const formatTime = (timeStr) => {
+    const [hour, min] = timeStr.split(":");
+    const date = new Date();
+    date.setHours(+hour, +min);
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      if (!user?._id || !token) return;
+
+      try {
+        const res = await fetch(
+          `http://localhost:3000/api/appointment/patient/${user._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await res.json();
+
+        if (res.ok) {
+          setAppointments(data.data || []);
+        } else {
+          alert(data.message || "Failed to load appointments.");
+        }
+      } catch (err) {
+        console.error("Error fetching appointments:", err);
+        alert("Server error while loading appointments.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, [user, token]);
 
   return (
-    <div className="max-w-6xl mx-auto py-10 px-6">
-      <h2 className="text-xl font-semibold mb-6">My Appointments</h2>
+    <div className="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+      <h2 className="text-3xl font-bold mb-8 text-gray-800">My Appointments</h2>
 
-      <div className="space-y-6">
-        {appointments.map((appt) => (
-          <div
-            key={appt.id}
-            className="flex items-center justify-between bg-white p-6 rounded-xl shadow"
-          >
-            {/* Left - Doctor Info */}
-            <div className="flex items-center gap-4">
-              <img
-                src={appt.image}
-                alt={appt.doctor}
-                className="w-20 h-20 object-cover rounded-lg"
-              />
-              <div>
-                <h3 className="font-semibold">{appt.doctor}</h3>
-                <p className="text-sm text-gray-500">{appt.specialty}</p>
-                <p className="text-sm text-gray-500">Address: {appt.address}</p>
-                <p className="text-sm text-gray-500">
-                  Date & Time: {appt.date}, {appt.time}
-                </p>
+      {loading ? (
+        <p className="text-center text-gray-500">Loading...</p>
+      ) : appointments.length === 0 ? (
+        <p className="text-center text-gray-500">No appointments found.</p>
+      ) : (
+        <div className="space-y-6">
+          {appointments.map((appt) => {
+            const doctor = appt.doctorId || {}; // dynamically populated
+            return (
+              <div
+                key={appt._id}
+                className="flex flex-col md:flex-row items-center justify-between bg-white p-6 rounded-xl shadow-md border"
+              >
+                {/* Doctor Info */}
+                <div className="flex items-center gap-5 w-full md:w-auto mb-4 md:mb-0">
+                  <img
+                    src={doctor.image || "/default-doctor.png"} // fallback if doctor image missing
+                    alt={doctor.name || "Doctor"}
+                    className="w-24 h-24 object-cover rounded-lg border"
+                  />
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {doctor.name || "Doctor"}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {doctor.specialization || "Specialist"}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      📍 {doctor.address || "Not Provided"}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      📅 {formatDate(appt.date)} &nbsp; ⏰{" "}
+                      {formatTime(appt.time)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="text-right space-y-2 w-full md:w-auto md:text-left">
+                  {appt.status === "pending" && (
+                    <span className="inline-block px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg">
+                      Pending
+                    </span>
+                  )}
+                  {appt.status === "paid" && (
+                    <span className="inline-block px-4 py-2 bg-green-100 text-green-800 rounded-lg">
+                      Paid
+                    </span>
+                  )}
+                  {appt.status === "cancelled" && (
+                    <span className="inline-block px-4 py-2 bg-red-100 text-red-800 rounded-lg">
+                      Cancelled
+                    </span>
+                  )}
+                  <div>
+                    <button className="mt-2 px-4 py-2 text-sm border border-red-300 text-red-600 rounded-lg hover:bg-red-50">
+                      Cancel Appointment
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            {/* Right - Actions */}
-            <div className="text-right space-y-2">
-              {appt.status === "unpaid" && (
-                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg">
-                  Pay here
-                </button>
-              )}
-              {appt.status === "pending" && (
-                <button className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg">
-                  Pending
-                </button>
-              )}
-              {appt.status === "paid" && (
-                <button className="px-4 py-2 bg-green-600 text-white rounded-lg">
-                  Paid
-                </button>
-              )}
-              <button className="px-4 py-2 border rounded-lg">
-                Cancel appointment
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };

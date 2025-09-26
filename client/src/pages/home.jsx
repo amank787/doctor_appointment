@@ -24,8 +24,8 @@ const App = () => {
                 appointment hassle-free.
               </p>
               <button
-                onClick={() => navigate("/appointments")}
-                className="px-6 py-3 bg-white text-blue-600  font-semibold rounded-3xl hover:bg-indigo-300"
+                onClick={() => navigate("/book-appointment")}
+                className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-3xl hover:bg-indigo-300"
               >
                 Book Appointment
               </button>

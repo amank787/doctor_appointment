@@ -17,6 +17,8 @@ import Login from "./pages/Login";
 import MyAppointment from "./pages/patient/MyAppointment";
 import Profile from "./pages/Profile";
 
+import BookAppointment from "./pages/patient/BookAppointment";
+
 // Doctor pages
 import DoctorDashboard from "./pages/doctor/DoctorDashBoard";
 import DoctorAppointment from "./pages/doctor/Appointment";
@@ -58,6 +60,14 @@ const AppWrapper = () => {
         <Route path="/login" element={<Login />} />
 
         {/* Patient Routes */}
+        <Route
+          path="/book-appointment/:doctorId"
+          element={
+            <ProtectedRoute allowedRoles={["patient"]}>
+              <BookAppointment />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/appointments"
           element={

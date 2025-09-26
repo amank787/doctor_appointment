@@ -12,20 +12,19 @@ const appointmentSchema = new mongoose.Schema(
       ref: "Doctor",
       required: true,
     },
-    startTime: { type: Date, required: true },
-    endTime: { type: Date, required: true },
+    date: { type: String, required: true }, // "YYYY-MM-DD"
+    time: { type: String, required: true }, // "10:00"
+    reason: { type: String },
     status: {
       type: String,
       enum: ["pending", "paid", "completed", "cancelled"],
       default: "pending",
     },
     priceCents: { type: Number, required: true },
-    // stripeSessionId: String,
-    // paymentIntentId: String,
   },
   { timestamps: true }
 );
 
-appointmentSchema.index({ doctorId: 1, startTime: 1 }, { unique: true });
+appointmentSchema.index({ doctorId: 1, date: 1, time: 1 }, { unique: true });
 
 export const Appointment = mongoose.model("Appointment", appointmentSchema);

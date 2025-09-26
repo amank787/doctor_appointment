@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const availabilitySchema = new mongoose.Schema(
   {
-    dayOfWeek: { type: Number, min: 0, max: 6, default: 0 },
-    start: String,
-    end: String,
+    dayOfWeek: { type: Number, min: 0, max: 6, required: true }, // 0=Sunday
+    start: { type: String, required: true }, // "10:00"
+    end: { type: String, required: true }, // "16:00"
     slotMins: { type: Number, default: 30 },
   },
   { _id: false }
@@ -18,11 +18,11 @@ const doctorSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    specialty: String,
+    specialty: { type: String, required: true },
     bio: String,
     feeCents: { type: Number, default: 5000 },
     approved: { type: Boolean, default: false },
-    //availability: [availabilitySchema],
+    availability: [availabilitySchema], // now enabled
   },
   { timestamps: true }
 );
