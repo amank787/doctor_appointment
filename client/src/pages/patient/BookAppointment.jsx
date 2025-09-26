@@ -106,7 +106,7 @@ const BookAppointment = () => {
       if (res.ok) {
         alert("✅ Appointment booked successfully!");
         setFormData({ date: "", time: "", reason: "" });
-        navigate("/my-appointments");
+        navigate("/myappointment");
       } else {
         alert(data.message || "❌ Failed to book appointment");
       }

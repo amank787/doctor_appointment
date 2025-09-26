@@ -72,13 +72,21 @@ export const getAppointmentById = asyncHandler(async (req, res) => {
     );
 });
 
-// Get all appointments for a specific patient
+// ✅ Get all appointments for a specific patient (with nested doctor.userId)
 export const getAppointmentsByPatient = asyncHandler(async (req, res) => {
   const { patientId } = req.params;
 
   const appointments = await Appointment.find({ patientId })
-    .populate("doctorId", "name specialization bio feeCents address")
-    .populate("patientId", "fullname email");
+    .populate({
+      path: "doctorId",
+      populate: {
+        path: "userId", // nested populate
+        model: "User", // must match your User model name
+        select: "fullName email", // fields from User
+      },
+      select: "specialization bio feeCents address userId", // fields from Doctor
+    })
+    .populate("patientId", "fullName email");
 
   return res
     .status(200)

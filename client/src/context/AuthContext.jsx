@@ -1,33 +1,51 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useState, useEffect } from "react";
 
+// Create context
 export const AuthContext = createContext();
 
+// Provider
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  // Load user from localStorage on mount
+  // ✅ Load user from localStorage safely on first render
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) setUser(storedUser);
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        if (parsedUser && parsedUser._id) {
+          setUser(parsedUser);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load user from localStorage:", err);
+    }
   }, []);
 
-  const login = (userData, tokens) => {
+  // ✅ Login: store user & tokens
+  const login = (userData, tokens = {}) => {
+    if (!userData || !userData._id) {
+      console.warn("Invalid user data passed to login()");
+      return;
+    }
+
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
-    if (tokens?.accessToken)
+
+    if (tokens.accessToken)
       localStorage.setItem("accessToken", tokens.accessToken);
-    if (tokens?.refreshToken)
+    if (tokens.refreshToken)
       localStorage.setItem("refreshToken", tokens.refreshToken);
   };
 
+  // ✅ Logout: clear frontend + call backend
   const logout = async () => {
-    try {
-      const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
 
-      // ✅ Call backend logout
+    try {
       const res = await fetch("http://localhost:3000/api/user/logout", {
-        method: "POST", // or GET if your backend uses GET
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: token ? `Bearer ${token}` : "",
@@ -35,8 +53,9 @@ export const AuthProvider = ({ children }) => {
       });
 
       const data = await res.json();
+
       if (!res.ok) {
-        console.error(data.message || "Logout failed on server");
+        console.warn("Backend logout failed:", data.message);
       }
     } catch (err) {
       console.error("Error during logout:", err);
@@ -49,6 +68,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ✅ Return context
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
       {children}
